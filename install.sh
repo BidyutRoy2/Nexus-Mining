@@ -1,59 +1,35 @@
-#!/bin/bash
+#!/bin/sh
 
 echo "-----------------------------------------------------------------------------"
 curl -s https://raw.githubusercontent.com/BidyutRoy2/BidyutRoy2/main/logo.sh | bash
 echo "-----------------------------------------------------------------------------"
 
-# Update and upgrade the package lists
-echo "Updating and upgrading packages..."
-sudo apt update && sudo apt upgrade -y
+rustc --version || curl https://sh.rustup.rs -sSf | sh
+NEXUS_HOME=$HOME/.nexus
 
-# Install necessary packages
-echo "Installing required packages..."
-sudo apt install -y \
-  curl \
-  iptables \
-  build-essential \
-  git \
-  wget \
-  lz4 \
-  jq \
-  make \
-  gcc \
-  nano \
-  automake \
-  autoconf \
-  tmux \
-  htop \
-  nvme-cli \
-  pkg-config \
-  libssl-dev \
-  libleveldb-dev \
-  tar \
-  clang \
-  bsdmainutils \
-  ncdu \
-  unzip
+while [ -z "$NONINTERACTIVE" ]; do
+    read -p "Do you agree to the Nexus Beta Terms of Use (https://nexus.xyz/terms-of-use)? (Y/n) " yn </dev/tty
+    case $yn in
+        [Nn]* ) exit;;
+        [Yy]* ) break;;
+        "" ) break;;
+        * ) echo "Please answer yes or no.";;
+    esac
+done
 
-# Install Rust
-echo "Installing Rust..."
-sudo curl https://sh.rustup.rs -sSf | sh
+git --version 2>&1 >/dev/null
+GIT_IS_AVAILABLE=$?
+if [ $GIT_IS_AVAILABLE != 0 ]; then
+  echo Unable to find git. Please install it and try again.
+  exit 1;
+fi
 
-# Source the Cargo environment
-echo "Setting up the environment..."
-source $HOME/.cargo/env
+if [ -d "$NEXUS_HOME/network-api" ]; then
+  echo "$NEXUS_HOME/network-api exists. Updating.";
+  (cd $NEXUS_HOME/network-api && git pull)
+else
+  mkdir -p $NEXUS_HOME
+  (cd $NEXUS_HOME && git clone https://github.com/nexus-xyz/network-api)
+fi
 
-# Add Cargo to PATH
-export PATH="$HOME/.cargo/bin:$PATH"
-
-# Start a new screen session named 'nexus'
-echo "Starting Nexus screen session..."
-screen -S nexus
-
-# Install Nexus CLI
-echo "Installing Nexus CLI..."
-sudo curl https://cli.nexus.xyz/install.sh | sh
-
-# Display the Prover ID
-echo "Displaying Prover ID..."
-cat $HOME/.nexus/prover-id
+(cd $NEXUS_HOME/network-api/clients/cli && cargo run --release --bin prover -- beta.orchestrator.nexus.xyz)
