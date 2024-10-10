@@ -1,3 +1,18 @@
+# Nexus Mining Via WSL/VPS Ubuntu Guide
+
+<p align="center">
+<img src='photo_2024-10-10_13-45-54.jpg' style="width:800px;height:400px;">
+</p>
+
+## System Requirements
+|                |       Minimum            |       Recommended            |
+|----------------|--------------------------|------------------------------|
+| **RAM**        | 4 GB RAM                 | 16 GB+ RAM                   |
+| **CPU Cores**  | 2 CPU cores              | 4+ CPU cores                 |
+| **Disk Space** | 16 GB free disk space    | 50 GB+ free disk space (SSD) |
+| **Operating System** | Ubuntu 22.04       | Ubuntu 22.04                 |
+
+
 ### Install Packages
 ```bash
 source <(wget -O - https://raw.githubusercontent.com/BidyutRoy2/BidyutRoy2/refs/heads/main/installation/Package.sh)
@@ -20,7 +35,7 @@ source $HOME/.cargo/env
 
 ### Install Nexus Mining
 ```bash
-sudo curl https://cli.nexus.xyz/install.sh | sh
+curl https://cli.nexus.xyz/install.sh | sh
 ```
 
 ### Save Prover Id
@@ -36,4 +51,9 @@ How to check
 screen screen -r nexus
 ```
 
-curl https://cli.nexus.xyz/install.sh | sh
+
+# ▄︻デ𝙂𝙚𝙩 𝙇𝙖𝙩𝙚𝙨𝙩 𝘼𝙞𝙧𝙙𝙧𝙤𝙥𝙨 & 𝙐𝙥𝙙𝙖𝙩𝙚𝙨═━一
+
+### ▄︻デ𝙅𝙤𝙞𝙣 𝙏𝙚𝙡𝙚𝙜𝙧𝙖𝙢═━一 [🎀  𝐻𝒾𝒹𝒹𝑒𝓃 𝒢𝑒𝓂  🎀](https://t.me/hiddengemnews) 
+
+### ░▒▓█►─═  𝓗𝓲𝒹ᗪ𝓔η Ǥέ𝕄 ═─◄█▓▒░
