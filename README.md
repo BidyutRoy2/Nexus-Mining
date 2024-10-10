@@ -30,6 +30,16 @@ source <(wget -O - https://raw.githubusercontent.com/BidyutRoy2/BidyutRoy2/refs/
 source <(wget -O - https://raw.githubusercontent.com/BidyutRoy2/BidyutRoy2/refs/heads/main/installation/upgrade-rust.sh)
 ```
 
+## Set Path Rust & Cargo
+```
+source $HOME/.cargo/env
+
+```
+```
+export PATH="$HOME/.cargo/bin:$PATH"
+
+```
+
 ### Create Screen
 ```bash
 screen -S nexus
