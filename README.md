@@ -13,6 +13,8 @@
 | **Operating System** | Ubuntu 22.04       | Ubuntu 22.04                 |
 
 
+## Open WSL/VPS Terminal Copy & Past
+
 ### Install Packages
 ```bash
 source <(wget -O - https://raw.githubusercontent.com/BidyutRoy2/BidyutRoy2/refs/heads/main/installation/Package.sh)
