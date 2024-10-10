@@ -20,7 +20,7 @@ source $HOME/.cargo/env
 
 ### Install Nexus Mining
 ```bash
-source <(wget -O - https://raw.githubusercontent.com/BidyutRoy2/Nexus-Mining/refs/heads/main/install.sh)
+sudo curl https://cli.nexus.xyz/install.sh | sh
 ```
 
 ### Save Prover Id
@@ -35,3 +35,5 @@ How to check
 ```bash
 screen screen -r nexus
 ```
+
+curl https://cli.nexus.xyz/install.sh | sh
