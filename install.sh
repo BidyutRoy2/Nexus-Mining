@@ -1,5 +1,9 @@
 #!/bin/bash
 
+echo "-----------------------------------------------------------------------------"
+curl -s https://raw.githubusercontent.com/BidyutRoy2/BidyutRoy2/main/logo.sh | bash
+echo "-----------------------------------------------------------------------------"
+
 # Update and upgrade the package lists
 echo "Updating and upgrading packages..."
 sudo apt update && sudo apt upgrade -y
