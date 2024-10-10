@@ -32,7 +32,7 @@ source <(wget -O - https://raw.githubusercontent.com/BidyutRoy2/BidyutRoy2/refs/
 
 ### Create Screen
 ```bash
-source $HOME/.cargo/env
+screen -S nexus
 ```
 
 ### Install Nexus Mining
