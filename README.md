@@ -47,7 +47,7 @@ screen -S nexus
 
 ### Install Nexus Mining
 ```bash
-curl https://cli.nexus.xyz/install.sh | sh
+sudo curl https://cli.nexus.xyz/install.sh | sh
 ```
 
 ### Save Prover Id
