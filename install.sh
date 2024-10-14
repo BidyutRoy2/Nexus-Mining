@@ -4,32 +4,116 @@ echo "--------------------------------------------------------------------------
 curl -s https://raw.githubusercontent.com/BidyutRoy2/BidyutRoy2/main/logo.sh | bash
 echo "-----------------------------------------------------------------------------"
 
-rustc --version || curl https://sh.rustup.rs -sSf | sh
-NEXUS_HOME=$HOME/.nexus
+BOLD=$(tput bold)
+NORMAL=$(tput sgr0)
+PINK='\033[1;35m'
 
-while [ -z "$NONINTERACTIVE" ]; do
-    read -p "Do you agree to the Nexus Beta Terms of Use (https://nexus.xyz/terms-of-use)? (Y/n) " yn </dev/tty
-    case $yn in
-        [Nn]* ) exit;;
-        [Yy]* ) break;;
-        "" ) break;;
-        * ) echo "Please answer yes or no.";;
+
+show() {
+    case $2 in
+        "error")
+            echo -e "${PINK}${BOLD}❌ $1${NORMAL}"
+            ;;
+        "progress")
+            echo -e "${PINK}${BOLD}⏳ $1${NORMAL}"
+            ;;
+        *)
+            echo -e "${PINK}${BOLD}✅ $1${NORMAL}"
+            ;;
     esac
-done
+}
 
-git --version 2>&1 >/dev/null
-GIT_IS_AVAILABLE=$?
-if [ $GIT_IS_AVAILABLE != 0 ]; then
-  echo Unable to find git. Please install it and try again.
-  exit 1;
+SERVICE_NAME="nexus"
+SERVICE_FILE="/etc/systemd/system/$SERVICE_NAME.service"
+
+show "Installing Rust..." "progress"
+if ! source <(wget -O - https://raw.githubusercontent.com/BidyutRoy2/BidyutRoy2/refs/heads/main/installation/rust.sh); then
+    show "Failed to install Rust." "error"
+    exit 1
 fi
 
-if [ -d "$NEXUS_HOME/network-api" ]; then
-  echo "$NEXUS_HOME/network-api exists. Updating.";
-  (cd $NEXUS_HOME/network-api && git pull)
+show "Updating package list..." "progress"
+if ! sudo apt update; then
+    show "Failed to update package list." "error"
+    exit 1
+fi
+
+if ! command -v git &> /dev/null; then
+    show "Git is not installed. Installing git..." "progress"
+    if ! sudo apt install git -y; then
+        show "Failed to install git." "error"
+        exit 1
+    fi
 else
-  mkdir -p $NEXUS_HOME
-  (cd $NEXUS_HOME && git clone https://github.com/nexus-xyz/network-api)
+    show "Git is already installed."
 fi
 
-(cd $NEXUS_HOME/network-api/clients/cli && cargo run --release --bin prover -- beta.orchestrator.nexus.xyz)
+if [ -d "$HOME/network-api" ]; then
+    show "Deleting existing repository..." "progress"
+    rm -rf "$HOME/network-api"
+fi
+
+sleep 3
+
+show "Cloning Nexus-XYZ network API repository..." "progress"
+if ! git clone https://github.com/nexus-xyz/network-api.git "$HOME/network-api"; then
+    show "Failed to clone the repository." "error"
+    exit 1
+fi
+
+cd $HOME/network-api/clients/cli
+
+show "Installing required dependencies..." "progress"
+if ! sudo apt install pkg-config libssl-dev -y; then
+    show "Failed to install dependencies." "error"
+    exit 1
+fi
+
+if systemctl is-active --quiet nexus.service; then
+    show "nexus.service is currently running. Stopping and disabling it..."
+    sudo systemctl stop nexus.service
+    sudo systemctl disable nexus.service
+else
+    show "nexus.service is not running."
+fi
+
+show "Creating systemd service..." "progress"
+if ! sudo bash -c "cat > $SERVICE_FILE <<EOF
+[Unit]
+Description=Nexus XYZ Prover Service
+After=network.target
+
+[Service]
+User=$USER
+WorkingDirectory=$HOME/network-api/clients/cli
+Environment=NONINTERACTIVE=1
+ExecStart=$HOME/.cargo/bin/cargo run --release --bin prover -- beta.orchestrator.nexus.xyz
+Restart=always
+RestartSec=10
+
+[Install]
+WantedBy=multi-user.target
+EOF"; then
+    show "Failed to create the systemd service file." "error"
+    exit 1
+fi
+
+show "Reloading systemd and starting the service..." "progress"
+if ! sudo systemctl daemon-reload; then
+    show "Failed to reload systemd." "error"
+    exit 1
+fi
+
+if ! sudo systemctl start $SERVICE_NAME.service; then
+    show "Failed to start the service." "error"
+    exit 1
+fi
+
+if ! sudo systemctl enable $SERVICE_NAME.service; then
+    show "Failed to enable the service." "error"
+    exit 1
+fi
+
+show "Nexus Prover installation and service setup complete!"
+show "You can check Nexus Prover logs using this command : journalctl -u nexus.service -fn 50"
+echo
