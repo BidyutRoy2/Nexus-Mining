@@ -34,8 +34,15 @@ https://github.com/user-attachments/assets/4648f062-f63a-40e1-8697-c82851ed9470
 ![image](https://github.com/user-attachments/assets/9f0eba4d-d218-4dc6-b396-b1aab84bc0cb)
 
 Important Commands
+
+### Restart Via CLI
 - `screen -S nexus`
 - `cd nexus-project`
 - `curl https://cli.nexus.xyz/ | sh`
+  
 ### Mimize Screen : СTRL + A + D
 - Reopen Screen `screen -r nexus`
+
+### Re-Check Your Prover ID
+- `cd .nexus`
+- `cat prover-id`
